@@ -1,7 +1,7 @@
 import asyncio
 import os
 import asyncpraw
-from asyncpraw.models import Comment
+from asyncpraw.models import Comment, util
 import chess
 import chess.engine
 
@@ -31,7 +31,8 @@ async def play(comment: Comment, board: chess.Board) -> None:
 
 	transport, stockfish = await chess.engine.popen_uci("/home/max/chessbot/Stockfish/src/stockfish")
 	
-	async for reply in anarchychess.stream.comments(skip_existing=True):
+	async for reply in util.stream_generator(reddit.inbox.comment_replies):
+	# async for reply in anarchychess.stream.comments(skip_existing=True):
 		print(reply.body)
 		print(reply.parent_id, comment.id)
 		if reply.parent_id == comment.id:
