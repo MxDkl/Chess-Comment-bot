@@ -40,18 +40,18 @@ def format_board_unicode(unicode: str) -> str:
 			if unicode[r][f] == "⭘":
 				unicode[r][f] = ""
 		unicode[r].append(str(8 - r))
+	unicode.insert(0, "||||||||".split("|"), )
 	unicode.insert(1, ":-|:-|:-|:-|:-|:-|:-|:-|:-".split("|"))
 	unicode.append("a|b|c|d|e|f|g|h|".split("|"))
 
 	return "\n".join(["|" + "|".join(r) + "|" for r in unicode])
 
 async def play(submission: Submission, board: chess.Board) -> None:
-	await submission.load()
-	
 	transport, stockfish = await chess.engine.popen_uci("../AnarchyFish-Bot/engines/stockfish_x86-64-bmi2.exe")
 	
 	last_comment = submission.created_utc
 	while not board.is_game_over():
+		await submission.load()
 		for comment in await submission.comments():
 			if comment.created_utc > last_comment:
 				last_comment = comment.created_utc
@@ -77,7 +77,7 @@ async def play(submission: Submission, board: chess.Board) -> None:
 				print("Edited")
 		
 		print("i")
-		await asyncio.sleep(30)
+		await asyncio.sleep(10)
 	print("Game over")
 
 async def main() -> None:
